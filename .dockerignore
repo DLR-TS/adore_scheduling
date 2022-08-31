@@ -1,0 +1,7 @@
+**/build
+adore_if_ros_scheduling/build
+**/tmp
+Makefile
+.gitignore
+.dockerignore
+**.docker*

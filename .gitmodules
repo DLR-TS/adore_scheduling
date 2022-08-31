@@ -1,0 +1,8 @@
+[submodule "cpplint_docker"]
+	path = cpplint_docker
+	url = https://github.com/DLR-TS/cpplint_docker.git
+	shallow = true
+[submodule "cppcheck_docker"]
+	path = cppcheck_docker
+	url = https://github.com/DLR-TS/cppcheck_docker.git
+	shallow = true
