@@ -14,11 +14,11 @@
 ********************************************************************************
 -->
 
-# ADORe ROS Scheduling Repository
+# adore_if_ros_scheduling
 This repository provides scheduling functionalities for ROS implementations of [ADORe](https://github.com/eclipse/adore).
 
 ## Structure
-On this level the repository is a docker and make wrapper for the actual content in the module subfolder.
+On this level the repository is a docker and makes wrapper for the actual content in the module subfolder.
 
 ## Setup
 This repository may be used on a system, which fulfills a set of requirements [adore_setup](https://github.com/dlr-ts/adore_setup).
