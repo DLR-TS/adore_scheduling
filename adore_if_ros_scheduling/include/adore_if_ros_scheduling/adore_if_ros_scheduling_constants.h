@@ -12,13 +12,11 @@
  *   Matthias Nichting
  ********************************************************************************/
 
-#include <string>
-
 /**
  * this header provides constants used in the adore_if_ros_scheduling project
  */
 
-const std::string TOPIC_NAME_SIMULATION_TIME = "/SIM/utc";
-const std::string TOPIC_NAME_CLOCK_TIME = "/clock";
-const std::string TOPIC_NAME_CLIENT_NAME = "/SIM/scheduling_client_names";
-const std::string TOPIC_NAME_SCHEDULIER_NOTIFICATION = "/SIM/scheduling";
+const char TOPIC_NAME_SIMULATION_TIME[] = "/SIM/utc";
+const char TOPIC_NAME_CLOCK_TIME[] = "/clock";
+const char TOPIC_NAME_CLIENT_NAME[] = "/SIM/scheduling_client_names";
+const char TOPIC_NAME_SCHEDULIER_NOTIFICATION[] = "/SIM/scheduling";

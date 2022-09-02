@@ -13,23 +13,24 @@
  *   Thomas Lobig - initial API and implementation
  ********************************************************************************/
 
-#include <map>
-#include <string>
-#include <vector>
-#include <string_view>
-#include <memory>
-#include <iostream>
-#include <functional>
+#include <adore_if_ros_scheduling/adore_if_ros_scheduling_constants.h>
+#include <adore_if_ros_scheduling/clocktimeconversion.h>
+#include <adore_if_ros_scheduling/schedulernotificationconversion.h>
+#include <ros/ros.h>
+#include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
+
 #include <chrono>
+#include <functional>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
 #include <thread>
 #include <unordered_map>
-
-#include <ros/ros.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Float64.h>
-#include <adore_if_ros_scheduling/schedulernotificationconversion.h>
-#include <adore_if_ros_scheduling/clocktimeconversion.h>
-#include <adore_if_ros_scheduling/adore_if_ros_scheduling_constants.h>
+#include <utility>
+#include <vector>
 
 namespace adore_if_ros_scheduling
 {
@@ -43,18 +44,18 @@ namespace adore_if_ros_scheduling
     {
         using ScheduleMap = std::multimap<TimeKeyType, RegistreeInfo>;
 
-    private:
+      private:
         ros::Subscriber m_notificationReader;
         ros::Subscriber m_clientNameReader;
         ros::Publisher m_simulationTimeWriter;
         ros::Publisher m_clockTimeWriter;
         SchedulerNotificationConversion m_schedulerNotificationConversion;
         ClockTimeConversion m_clockTimeConversion;
-        bool m_pause;         // true, if scheduling is paused
-        int m_minRegisters;   // number of registers that is needed to start the scheduling
-        bool m_autostart;     // true, if scheduling should start without keyboard input
-        bool m_started;       // ture, if scheduling has started
-        int m_printIntervalS; // interval of console output in second (measured in simulation time)
+        bool m_pause;          // true, if scheduling is paused
+        int m_minRegisters;    // number of registers that is needed to start the scheduling
+        bool m_autostart;      // true, if scheduling should start without keyboard input
+        bool m_started;        // ture, if scheduling has started
+        int m_printIntervalS;  // interval of console output in second (measured in simulation time)
         bool m_limitSimulationSpeed;
         std::pair<uint32_t, uint32_t> m_lastWallTime;
         std::pair<uint32_t, uint32_t> m_lastRosTime;
@@ -92,8 +93,11 @@ namespace adore_if_ros_scheduling
         Scheduler(ros::NodeHandle &n, int minRegisters, bool autostart, bool tcp_no_delay)
         {
             m_schedule = new ScheduleMap();
-            m_notificationReader = n.subscribe(TOPIC_NAME_SCHEDULIER_NOTIFICATION, 1000, &Scheduler::updateClientUpperTimeLimit, this, ros::TransportHints().tcpNoDelay(tcp_no_delay));
-            m_clientNameReader = n.subscribe(TOPIC_NAME_CLIENT_NAME, 1000, &Scheduler::saveClientName, this, ros::TransportHints().tcpNoDelay(tcp_no_delay));
+            m_notificationReader =
+                n.subscribe(TOPIC_NAME_SCHEDULIER_NOTIFICATION, 1000, &Scheduler::updateClientUpperTimeLimit, this,
+                            ros::TransportHints().tcpNoDelay(tcp_no_delay));
+            m_clientNameReader = n.subscribe(TOPIC_NAME_CLIENT_NAME, 1000, &Scheduler::saveClientName, this,
+                                             ros::TransportHints().tcpNoDelay(tcp_no_delay));
             m_simulationTimeWriter = n.advertise<std_msgs::Float64>(TOPIC_NAME_SIMULATION_TIME, 1);
             m_clockTimeWriter = n.advertise<rosgraph_msgs::Clock>(TOPIC_NAME_CLOCK_TIME, 1);
             m_now = std::make_pair(0, 0);
@@ -109,7 +113,7 @@ namespace adore_if_ros_scheduling
             m_printIntervalS = 10;
         }
 
-    public:
+      public:
         /**
          * return instance of Scheduler class
          */
@@ -120,11 +124,7 @@ namespace adore_if_ros_scheduling
         /**
          * init
          */
-        void init()
-        {
-            std::cout << std::endl
-                      << "Type s to start" << std::endl;
-        }
+        void init() { std::cout << std::endl << "Type s to start" << std::endl; }
         /**
          *  update uppter time limit associated with certain client
          */
@@ -169,8 +169,7 @@ namespace adore_if_ros_scheduling
                     if (upper_time_limit.first > m_now.first && upper_time_limit.first % m_printIntervalS == 0)
                         print = true;
                     m_now = upper_time_limit;
-                    if (print)
-                        printTime();
+                    if (print) printTime();
                     write();
                 }
             }
@@ -189,8 +188,7 @@ namespace adore_if_ros_scheduling
             m_pause = !m_pause;
             std::cout << (m_pause ? "pause at " : "resume at ");
             printTime();
-            if (!m_pause)
-                setNewTime();
+            if (!m_pause) setNewTime();
         }
         /**
          * limit the speed of simulation to the speed of ros::WallTime (inaccurate)
@@ -203,7 +201,8 @@ namespace adore_if_ros_scheduling
                 m_lastTimeSet.first = m_now;
                 m_lastTimeSet.second = std::make_pair(ros::WallTime::now().sec, ros::WallTime::now().nsec);
             }
-            std::cout << "limiting simulation speed is now " << (m_limitSimulationSpeed ? "activated" : "deactivated") << std::endl;
+            std::cout << "limiting simulation speed is now " << (m_limitSimulationSpeed ? "activated" : "deactivated")
+                      << std::endl;
         }
         /**
          * publisch new time signal
@@ -217,7 +216,7 @@ namespace adore_if_ros_scheduling
                 m_lastTimeSet.second = std::make_pair(ros::WallTime::now().sec, ros::WallTime::now().nsec);
             }
             std_msgs::Float64 simulationTimeOutput;
-            simulationTimeOutput.data = (double)m_now.first + ((double)m_now.second) * 1e-9;
+            simulationTimeOutput.data = static_cast<double>(m_now.first) + (static_cast<double>(m_now.second)) * 1e-9;
             m_simulationTimeWriter.publish(simulationTimeOutput);
             m_clockTimeWriter.publish(m_clockTimeConversion(m_now));
         }
@@ -233,10 +232,15 @@ namespace adore_if_ros_scheduling
          */
         void printTime()
         {
-            std::pair<uint32_t, uint32_t> newWallTime = std::make_pair(ros::WallTime::now().sec, ros::WallTime::now().nsec);
-            double speedfactor = ((double)m_now.first + ((double)m_now.second) * 1e-9 - (double)m_lastRosTime.first - ((double)m_lastRosTime.second) * 1e-9) /
-                                 ((double)newWallTime.first + ((double)newWallTime.second) * 1e-9 - (double)m_lastWallTime.first - ((double)m_lastWallTime.second) * 1e-9);
-            std::cout << "time = " << m_now.first << "." << std::setfill('0') << std::setw(9) << m_now.second << "; rel. simulation speed = " << speedfactor << std::endl;
+            std::pair<uint32_t, uint32_t> newWallTime =
+                std::make_pair(ros::WallTime::now().sec, ros::WallTime::now().nsec);
+            double speedfactor =
+                (static_cast<double>(m_now.first) + (static_cast<double>(m_now.second)) * 1e-9 -
+                 static_cast<double>(m_lastRosTime.first) - (static_cast<double>(m_lastRosTime.second)) * 1e-9) /
+                (static_cast<double>(newWallTime.first) + (static_cast<double>(newWallTime.second)) * 1e-9 -
+                 static_cast<double>(m_lastWallTime.first) - (static_cast<double>(m_lastWallTime.second)) * 1e-9);
+            std::cout << "time = " << m_now.first << "." << std::setfill('0') << std::setw(9) << m_now.second
+                      << "; rel. simulation speed = " << speedfactor << std::endl;
             m_lastWallTime = newWallTime;
             m_lastRosTime = m_now;
         }
@@ -261,7 +265,8 @@ namespace adore_if_ros_scheduling
             {
                 auto clientname_it = m_clientNames.find(i->second);
                 std::string clientname = clientname_it != m_clientNames.end() ? " : " + clientname_it->second : "";
-                std::cout << "  max time for id " << i->second << " is " << i->first.first << "." << std::setfill('0') << std::setw(9) << i->first.second << clientname << std::endl;
+                std::cout << "  max time for id " << i->second << " is " << i->first.first << "." << std::setfill('0')
+                          << std::setw(9) << i->first.second << clientname << std::endl;
             }
         }
         /**
@@ -274,4 +279,4 @@ namespace adore_if_ros_scheduling
             setNewTime(true);
         }
     };
-}
+}  // namespace adore_if_ros_scheduling

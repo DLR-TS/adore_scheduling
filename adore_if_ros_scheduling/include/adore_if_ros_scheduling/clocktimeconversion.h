@@ -14,15 +14,18 @@
 
 #include <rosgraph_msgs/Clock.h>
 
+#include <utility>
+
 namespace adore_if_ros_scheduling
 {
 
     /**
-     * This class convertes between between std::pair<uint32_t,uint32_t>  and ROS message rosgraph_msgs/Clock
+     * This class convertes between between std::pair<uint32_t,uint32_t>  and
+     * ROS message rosgraph_msgs/Clock
      */
     class ClockTimeConversion
     {
-    public:
+      public:
         void operator()(rosgraph_msgs::ClockConstPtr cl, std::pair<uint32_t, uint32_t> &value)
         {
             value.first = cl->clock.sec;
@@ -41,4 +44,4 @@ namespace adore_if_ros_scheduling
             return cl;
         }
     };
-}
+}  // namespace adore_if_ros_scheduling

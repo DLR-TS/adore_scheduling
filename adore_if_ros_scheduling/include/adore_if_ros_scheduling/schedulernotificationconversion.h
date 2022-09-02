@@ -12,20 +12,22 @@
  *   Matthias Nichting - initial API and implementation
  ********************************************************************************/
 
-#include <adore_scheduling/schedulernotification.h>
 #include <adore_if_ros_scheduling/SchedulerNotification.h>
+#include <adore_scheduling/schedulernotification.h>
 
 namespace adore_if_ros_scheduling
 {
     /**
-     * This class convertes between adore_scheduling::SchedulerNotification and ROS message adore_if_ros_scheduling::SchedulerNotification.
+     * This class convertes between adore_scheduling::SchedulerNotification and ROS message
+     * adore_if_ros_scheduling::SchedulerNotification.
      */
     class SchedulerNotificationConversion
     {
-    public:
+      public:
         adore_scheduling::SchedulerNotification operator()(adore_if_ros_scheduling::SchedulerNotificationConstPtr msg)
         {
-            return adore_scheduling::SchedulerNotification(msg->identifier, msg->upperTimeLimit.sec, msg->upperTimeLimit.nsec);
+            return adore_scheduling::SchedulerNotification(msg->identifier, msg->upperTimeLimit.sec,
+                                                           msg->upperTimeLimit.nsec);
         }
         adore_if_ros_scheduling::SchedulerNotification operator()(const adore_scheduling::SchedulerNotification &sn)
         {
@@ -36,4 +38,4 @@ namespace adore_if_ros_scheduling
             return msg;
         }
     };
-}
+}  // namespace adore_if_ros_scheduling

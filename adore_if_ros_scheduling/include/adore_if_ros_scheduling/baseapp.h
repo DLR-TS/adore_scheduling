@@ -14,27 +14,32 @@
  ********************************************************************************/
 
 #include <adore_if_ros_scheduling/schedulernotificationmanager.h>
+
+#include <string>
 #include <vector>
 
 namespace adore_if_ros_scheduling
 {
 
     /**
-     *  Base class for ros nodes - Baseapp provides functions that can be used by derived ros nodes. It handles the communication with the scheduler node.
+     *  Base class for ros nodes - Baseapp provides functions that can be used
+     * by derived ros nodes. It handles the communication with the scheduler
+     * node.
      */
     class Baseapp
     {
-    public:
+      public:
         Baseapp() {}
 
-    private:
+      private:
         inline static ros::NodeHandle *m_pN = 0;
-        std::vector<ros::Timer> timers_;                                               // functions that are periodically called
-        inline static adore_if_ros_scheduling::SchedulerNotificationManager *snm_ = 0; // object to coordinate communication with the scheduler
-        bool useScheduler_;                                                            // true, if scheduler is used
-        double rate_;                                                                  // main rate of calling the functions in timers_ are called
+        std::vector<ros::Timer> timers_;  // functions that are periodically called
+        inline static adore_if_ros_scheduling::SchedulerNotificationManager *snm_ =
+            0;               // object to coordinate communication with the scheduler
+        bool useScheduler_;  // true, if scheduler is used
+        double rate_;        // main rate of calling the functions in timers_ are called
 
-    public:
+      public:
         /**
          * schedulerCallback - notifies scheduler of the new upper bound in time
          *
@@ -58,8 +63,7 @@ namespace adore_if_ros_scheduling
                 ros::NodeHandle np("~");
                 np.getParam("rate", rate_);
             }
-            if (rate == 0.0)
-                useScheduler_ = false;
+            if (rate == 0.0) useScheduler_ = false;
         }
         /**
          * initSim - intilizes functionalites for simulation
@@ -69,7 +73,9 @@ namespace adore_if_ros_scheduling
         {
             if (useScheduler_)
             {
-                snm_ = new adore_if_ros_scheduling::SchedulerNotificationManager(m_pN, std::hash<std::string>{}(ros::this_node::getNamespace() + ros::this_node::getName()), (uint32_t)(1e9 / rate_));
+                snm_ = new adore_if_ros_scheduling::SchedulerNotificationManager(
+                    m_pN, std::hash<std::string>{}(ros::this_node::getNamespace() + ros::this_node::getName()),
+                    (uint32_t)(1e9 / rate_));
                 timers_.push_back(m_pN->createTimer(ros::Duration(1 / rate_), schedulerCallback));
                 snm_->publishClientName(ros::this_node::getName());
             }
@@ -77,24 +83,15 @@ namespace adore_if_ros_scheduling
         /**
          * getRosNodeHandle - return ros::NodeHandle pointer
          */
-        static ros::NodeHandle *getRosNodeHandle()
-        {
-            return m_pN;
-        }
+        static ros::NodeHandle *getRosNodeHandle() { return m_pN; }
         /**
          * resume - resumes updating the upper time bound
          */
-        virtual void resume()
-        {
-            snm_->resume();
-        }
+        virtual void resume() { snm_->resume(); }
         /**
          * pause - pauses updating the upper time bound
          */
-        virtual void pause()
-        {
-            snm_->pause();
-        }
+        virtual void pause() { snm_->pause(); }
         /**
          * run
          */
@@ -105,16 +102,14 @@ namespace adore_if_ros_scheduling
                 ros::spin();
             }
         }
-        inline static void func(std::function<void()> &callback, const ros::TimerEvent &te)
-        {
-            callback();
-        }
+        inline static void func(std::function<void()> &callback, const ros::TimerEvent &te) { callback(); }
         /**
          * addTimerCallback - add a function that should be called periodically
          */
         virtual void addTimerCallback(std::function<void()> &callbackFcn, double rate_factor = 1.0)
         {
-            timers_.push_back(m_pN->createTimer(ros::Duration(1 / rate_ / rate_factor), std::bind(&func, callbackFcn, std::placeholders::_1)));
+            timers_.push_back(m_pN->createTimer(ros::Duration(1 / rate_ / rate_factor),
+                                                std::bind(&func, callbackFcn, std::placeholders::_1)));
         }
 
         /**
@@ -139,4 +134,4 @@ namespace adore_if_ros_scheduling
             return m_pN->param<T>(name, val, default_val);
         }
     };
-}
+}  // namespace adore_if_ros_scheduling
