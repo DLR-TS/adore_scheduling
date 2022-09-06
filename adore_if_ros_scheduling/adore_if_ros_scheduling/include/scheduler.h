@@ -13,9 +13,9 @@
  *   Thomas Lobig - initial API and implementation
  ********************************************************************************/
 
-#include <adore_if_ros_scheduling/adore_if_ros_scheduling_constants.h>
-#include <adore_if_ros_scheduling/clocktimeconversion.h>
-#include <adore_if_ros_scheduling/schedulernotificationconversion.h>
+#include <lib_adore_if_ros_scheduling/adore_if_ros_scheduling_constants.h>
+#include <lib_adore_if_ros_scheduling/clocktimeconversion.h>
+#include <lib_adore_if_ros_scheduling/schedulernotificationconversion.h>
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
@@ -128,7 +128,7 @@ namespace adore_if_ros_scheduling
         /**
          *  update uppter time limit associated with certain client
          */
-        void updateClientUpperTimeLimit(const adore_if_ros_scheduling::SchedulerNotification::ConstPtr &msg)
+        void updateClientUpperTimeLimit(const adore_if_ros_scheduling_msg::SchedulerNotification::ConstPtr &msg)
         {
             adore_scheduling::SchedulerNotification clientNotification = m_schedulerNotificationConversion(msg);
             updateSchedule(clientNotification.getID(), clientNotification.getUpperTimeLimitPair());

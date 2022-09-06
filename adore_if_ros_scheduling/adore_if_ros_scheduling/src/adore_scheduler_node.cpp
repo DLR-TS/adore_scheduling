@@ -12,7 +12,7 @@
  *   Matthias Nichting - initial API and implementation
  ********************************************************************************/
 
-#include <adore_if_ros_scheduling/scheduler.h>
+#include <scheduler.h>
 
 #include <iostream>
 #include <thread>

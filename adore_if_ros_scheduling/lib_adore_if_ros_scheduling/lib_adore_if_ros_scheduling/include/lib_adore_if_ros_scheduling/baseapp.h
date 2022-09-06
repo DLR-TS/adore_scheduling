@@ -13,7 +13,7 @@
  *   Thomas Lobig - initial API and implementation
  ********************************************************************************/
 
-#include <adore_if_ros_scheduling/schedulernotificationmanager.h>
+#include <lib_adore_if_ros_scheduling/schedulernotificationmanager.h>
 
 #include <string>
 #include <vector>

@@ -28,19 +28,17 @@ build: set_env clean
 	docker build --network host \
                  --tag $(shell echo ${TAG} | tr A-Z a-z) \
                  --build-arg PROJECT=${PROJECT} .
-	docker cp $$(docker create --rm $(shell echo ${TAG} | tr A-Z a-z)):/tmp/${PROJECT}/build ${ROOT_DIR}/${PROJECT}
+	docker cp $$(docker create --rm $(shell echo ${TAG} | tr A-Z a-z)):/tmp/${PROJECT}/${PROJECT}/build ${ROOT_DIR}/${PROJECT}/${PROJECT}
+	docker cp $$(docker create --rm $(shell echo ${TAG} | tr A-Z a-z)):/tmp/${PROJECT}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build ${ROOT_DIR}/${PROJECT}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg
+	docker cp $$(docker create --rm $(shell echo ${TAG} | tr A-Z a-z)):/tmp/${PROJECT}/lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling/build ${ROOT_DIR}/${PROJECT}/lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling
+	docker cp $$(docker create --rm $(shell echo ${TAG} | tr A-Z a-z)):/tmp/${PROJECT}/lib_adore_scheduling/lib_adore_scheduling/build ${ROOT_DIR}/${PROJECT}/lib_adore_scheduling/lib_adore_scheduling
 
 .PHONY: clean
 clean: set_env
-	rm -rf "${ROOT_DIR}/${PROJECT}/build"
+	rm -rf "${ROOT_DIR}/${PROJECT}/${PROJECT}/build"
+	rm -rf "${ROOT_DIR}/${PROJECT}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build"
+	rm -rf "${ROOT_DIR}/${PROJECT}/lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling/build"
+	rm -rf "${ROOT_DIR}/${PROJECT}/lib_adore_scheduling/lib_adore_scheduling/build"
 	docker rm $$(docker ps -a -q --filter "ancestor=${TAG}") 2> /dev/null || true
 	docker rmi $$(docker images -q ${PROJECT}) 2> /dev/null || true
 
-.PHONY: build_docker_layers 
-build_docker_layers: 
-	@DOCKER_BUILDKIT=0 make build #| grep "\-\-\->" | \
-#                                       grep -v "Using" | \
-#                                       sed "s| \-\-\-> ||g" | \
-#                                       sed "s|Running in ||g" | \
-#                                       tr '\n' ' ' >> .docker_layers_cache
-#	@echo "($$(git rev-parse --abbrev-ref HEAD):$$(git rev-parse --short HEAD))" >> .docker_layers_cache
