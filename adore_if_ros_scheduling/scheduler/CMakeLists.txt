@@ -13,7 +13,7 @@
 #********************************************************************************
 
 cmake_minimum_required(VERSION 3.13)
-project(adore_if_ros_scheduling)
+project(scheduler)
 
 set(PACKAGE_VENDOR "DLR TS-KOS-SAI")
 set(PACKAGE_DESCRIPTION "adore_if_ros_msg")
@@ -21,10 +21,10 @@ set(PACKAGE_MAINTAINER "DLR TS-KOS-SAI")
 set(PACKAGE_MAINTAINER_EMAIL "ts-kos-sai@dlr.de")
 
 
-#list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
+list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
 #message(WARNING ${CMAKE_CURRENT_SOURCE_DIR})
 #list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling/build/install/include")
-#list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../lib_adore_if_scheduling/lib_adore_scheduling/build/install")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../build/adore_if_ros_scheduling_msg")
 
 
 include(GNUInstallDirs)
@@ -41,21 +41,19 @@ include(GNUInstallDirs)
 #)
 
 
-find_package(adore_if_ros_scheduling_msg CONFIG REQUIRED)
-find_package(lib_adore_scheduling CONFIG REQUIRED)
-find_package(lib_adore_if_ros_scheduling REQUIRED)
 
 
 find_package(catkin REQUIRED
    COMPONENTS 
       roscpp
-)
+      adore_if_ros_scheduling_msg
+      )
 
 catkin_package(
   INCLUDE_DIRS include
-  DEPENDS 
+  CATKIN_DEPENDS 
 #    lib_adore_if_ros_scheduling
-#    adore_if_ros_scheduling_msg
+    adore_if_ros_scheduling_msg
 )
 
 
@@ -75,7 +73,8 @@ target_link_libraries(
     adore_scheduler_node 
       PRIVATE 
         ${catkin_LIBRARIES}
-#        lib_adore_if_ros_scheduling::lib_adore_if_ros_scheduling
+	adore_if_ros_scheduling_msg
+	lib_adore_if_ros_scheduling
 )
 target_compile_features(adore_scheduler_node PRIVATE cxx_std_17)
 

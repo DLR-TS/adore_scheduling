@@ -26,7 +26,14 @@ set(PACKAGE_MAINTAINER_EMAIL "ts-kos-sai@dlr.de")
 
 include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(Packing)
+
+
+#target_include_directories(
+#  ${PROJECT_NAME}
+#  INTERFACE 
+#    $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+#    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+#)
 
 find_package(
 	catkin REQUIRED COMPONENTS
@@ -58,7 +65,7 @@ catkin_package(
 )
 
 install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}_Targets
+        EXPORT ${PROJECT_NAME}Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -72,11 +79,11 @@ configure_package_config_file(
   INSTALL_DESTINATION
   ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 
-install(EXPORT ${PROJECT_NAME}_Targets
-        COMPONENT ${PROJECT_NAME}
-        FILE ${PROJECT_NAME}Targets.cmake
-        NAMESPACE ${PROJECT_NAME}::
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+
+install(EXPORT ${PROJECT_NAME}Targets
+    FILE ${PROJECT_NAME}Targets.cmake
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
 )
 
 install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
@@ -84,5 +91,6 @@ install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
         COMPONENT ${PROJECT_NAME}
 )
+message(WARNING ${PROJECT_SOURCE_DIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/../build/devel/include DESTINATION .)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/build/devel/include DESTINATION .) 

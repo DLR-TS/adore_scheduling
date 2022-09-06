@@ -19,16 +19,19 @@ add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 set(PACKAGE_VENDOR "DLR TS-KOS-SAI")
-set(PACKAGE_DESCRIPTION "adore_if_ros_msg")
+set(PACKAGE_DESCRIPTION "lib_adore_if_ros_scheduling")
 set(PACKAGE_MAINTAINER "DLR TS-KOS-SAI")
 set(PACKAGE_MAINTAINER_EMAIL "ts-kos-sai@dlr.de")
 
 
 include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(Packing)
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../lib_adore_scheduling/lib_adore_scheduling/build/install")
+
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../build/lib_adore_scheduling")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../build/adore_if_ros_scheduling_msg")
+
+message(WARNING ${CMAKE_PREFIX_PATH})
 
 target_include_directories(
   ${PROJECT_NAME}
@@ -37,7 +40,14 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-find_package(lib_adore_scheduling CONFIG REQUIRED)
+
+target_link_libraries(${PROJECT_NAME}
+  INTERFACE
+    lib_adore_scheduling
+    adore_if_ros_scheduling_msg
+)
+
+
 find_package(roscpp REQUIRED)
 
 #target_link_libraries(${PROJECT_NAME}
@@ -75,5 +85,4 @@ install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         COMPONENT ${PROJECT_NAME}
 )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${PROJECT_SOURCE_DIR}/build/devel) 
-
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION .)

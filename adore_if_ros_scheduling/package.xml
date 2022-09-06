@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+#********************************************************************************
+#* Copyright (C) 2017-2022 German Aerospace Center (DLR). 
+#* Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
+#*
+#* This program and the accompanying materials are made available under the 
+#* terms of the Eclipse Public License 2.0 which is available at
+#* http://www.eclipse.org/legal/epl-2.0.
+#*
+#* SPDX-License-Identifier: EPL-2.0 
+#*
+#* Contributors: 
+#*   Matthias Nichting - initial API and implementation
+#********************************************************************************
+-->
+
+<package format="2">
+  <name>adore_if_ros_scheduling</name>
+  <version>0.0.1</version>
+  <description>Scheduling for adore_if_ros.</description>
+  <maintainer email="Matthias.Nichting@DLR.de">Matthias Nichting</maintainer>
+  <license>EPL-2.0</license>
+  <depend>roscpp</depend>
+   <exec_depend>message_runtime</exec_depend> 
+  <buildtool_depend>catkin</buildtool_depend>
+  <export>
+  </export>
+</package>

@@ -16,7 +16,7 @@
 -->
 
 <package format="2">
-  <name>adore_if_ros_scheduling</name>
+  <name>scheduler</name>
   <version>0.0.1</version>
   <description>Scheduling for adore_if_ros.</description>
   <maintainer email="Matthias.Nichting@DLR.de">Matthias Nichting</maintainer>

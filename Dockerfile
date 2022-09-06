@@ -17,52 +17,57 @@ RUN apt-get update && \
 COPY ${PROJECT} /tmp/${PROJECT}
 
 
-RUN cd adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg && mkdir -p build 
-SHELL ["/bin/bash", "-c"]
-WORKDIR /tmp/${PROJECT}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build
+#RUN cd adore_if_ros_scheduling_msg && mkdir -p build 
+#SHELL ["/bin/bash", "-c"]
+#WORKDIR /tmp/${PROJECT}/adore_if_ros_scheduling_msg/build
 
-RUN source /opt/ros/noetic/setup.bash && \
-    cmake .. && \
-    cmake --build .  --config Release --target install -- -j $(nproc) && \
-    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
-    cd /tmp/${PROJECT}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build && ln -s devel install 
+#RUN source /opt/ros/noetic/setup.bash && \
+#    cmake .. && \
+#    cmake --build .  --config Release --target install -- -j $(nproc) && \
+#    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
+#    cd /tmp/${PROJECT}/adore_if_ros_scheduling_msg/build && ln -s devel install 
+
+#WORKDIR /tmp/${PROJECT}
+
+#RUN cd lib_adore_scheduling && mkdir -p build 
+#SHELL ["/bin/bash", "-c"]
+#WORKDIR /tmp/${PROJECT}/lib_adore_scheduling/build
+
+#RUN source /opt/ros/noetic/setup.bash && \
+#    cmake .. && \
+#    cmake --build .  --config Release --target install -- -j $(nproc) && \
+#    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
+#    cd /tmp/${PROJECT}/lib_adore_scheduling/build && ln -s devel install 
+
+
+#WORKDIR /tmp/${PROJECT}
+
+#RUN cd lib_adore_if_ros_scheduling && mkdir -p build 
+#SHELL ["/bin/bash", "-c"]
+#WORKDIR /tmp/${PROJECT}/lib_adore_if_ros_scheduling/build
+
+#RUN source /opt/ros/noetic/setup.bash && \
+#    cmake .. && \
+#    cmake --build .  --config Release --target install -- -j $(nproc) && \
+#    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
+#    cd /tmp/${PROJECT}/lib_adore_if_ros_scheduling/build && ln -s devel install 
 
 
 WORKDIR /tmp/${PROJECT}
 
-RUN cd lib_adore_scheduling/lib_adore_scheduling && mkdir -p build 
+ARG CMAKE_PREFIX_PATH="/tmp/${PROJECT}/build/install"
+
+RUN mkdir -p build 
 SHELL ["/bin/bash", "-c"]
-WORKDIR /tmp/${PROJECT}/lib_adore_scheduling/lib_adore_scheduling/build
+WORKDIR /tmp/${PROJECT}/build
 
 RUN source /opt/ros/noetic/setup.bash && \
-    cmake .. && \
-    cmake --build .  --config Release --target install -- -j $(nproc) && \
+    cmake .. \ 
+             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+             -DCMAKE_BUILD_TYPE=Release \
+             -DCMAKE_INSTALL_PREFIX="install" \
+             -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} && \
+    cmake --build . -v --config Release --target install -- -j $(nproc) && \
     #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
-    cd /tmp/${PROJECT}/lib_adore_scheduling/lib_adore_scheduling/build && ln -s devel install 
-
-
-WORKDIR /tmp/${PROJECT}
-
-RUN cd lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling && mkdir -p build 
-SHELL ["/bin/bash", "-c"]
-WORKDIR /tmp/${PROJECT}/lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling/build
-
-RUN source /opt/ros/noetic/setup.bash && \
-    cmake .. && \
-    cmake --build .  --config Release --target install -- -j $(nproc) && \
-    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
-    cd /tmp/${PROJECT}/lib_adore_if_ros_scheduling/lib_adore_if_ros_scheduling/build && ln -s devel install 
-
-
-WORKDIR /tmp/${PROJECT}
-
-RUN cd ${PROJECT} && mkdir -p build 
-SHELL ["/bin/bash", "-c"]
-WORKDIR /tmp/${PROJECT}/${PROJECT}/build
-
-RUN source /opt/ros/noetic/setup.bash && \
-    cmake .. && \
-    cmake --build .  --config Release --target install -- -j $(nproc) && \
-    #cpack -G DEB && find . -type f -name "*.deb" | xargs mv -t . && \
-    cd /tmp/${PROJECT}/${PROJECT}/build && ln -s devel install | true
+    cd /tmp/${PROJECT}/build && ln -s devel install | true
 
