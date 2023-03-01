@@ -10,7 +10,7 @@ MAKEFLAGS += --no-print-directory
 DOCKER_BUILDKIT?=1
 DOCKER_CONFIG?=
 
-include adore_scheduling.mk
+include ${ROOT_DIR}/adore_scheduling.mk
 
 
 .PHONY: all
