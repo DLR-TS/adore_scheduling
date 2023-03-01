@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+#include(CMakeFindDependencyMacro)
+#find_dependency(lib_adore_scheduling)
+#find_dependency(adore_if_ros_scheduling_msg)
+
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+check_required_components("@PROJECT_NAME@")
