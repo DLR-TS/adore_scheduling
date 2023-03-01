@@ -18,7 +18,7 @@ ADORE_SCHEDULING_TAG=${adore_scheduling_tag}
 adore_scheduling_image=${adore_scheduling_project}:${adore_scheduling_tag}
 ADORE_SCHEDULING_IMAGE=${adore_scheduling_image}
 
-include adore_scheduler/adore_scheduler.mk
+include ${adore_scheduling_MAKEFILE_PATH}/adore_scheduler/adore_scheduler.mk
 
 
 .PHONY: build_adore_scheduling 
