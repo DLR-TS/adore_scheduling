@@ -1,0 +1,10 @@
+make
+cmake
+gcc
+g++
+python3-catkin-tools
+bash
+ros-noetic-roscpp-core
+ros-noetic-roscpp
+libroscpp-dev
+
