@@ -13,7 +13,7 @@
  ********************************************************************************/
 
 #include <adore_if_ros_scheduling_msg/SchedulerNotification.h>
-#include <lib_adore_scheduling/schedulernotification.h>
+#include <libadore_scheduling/schedulernotification.h>
 
 namespace adore_if_ros_scheduling
 {

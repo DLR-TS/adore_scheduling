@@ -12,7 +12,7 @@
  *   Matthias Nichting - initial API and implementation
  ********************************************************************************/
 
-#include <lib_adore_scheduling/schedulernotification.h>
+#include <libadore_scheduling/schedulernotification.h>
 #include <string>
 
 namespace adore_scheduling

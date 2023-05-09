@@ -16,7 +16,7 @@
 -->
 
 <package format="2">
-  <name>lib_adore_scheduling</name>
+  <name>libadore_scheduling</name>
   <version>0.0.1</version>
   <description>Scheduling for ADORe.</description>
   <maintainer email="Matthias.Nichting@DLR.de">Matthias Nichting</maintainer>

@@ -22,7 +22,7 @@
   <maintainer email="Matthias.Nichting@DLR.de">Matthias Nichting</maintainer>
   <license>EPL-2.0</license>
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>lib_adore_scheduling</depend>
+  <depend>libadore_scheduling</depend>
   <depend>adore_if_ros_scheduling_msg</depend>
   <export>
   </export>

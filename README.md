@@ -15,5 +15,5 @@
 -->
 
 # adore_scheduling
-This repository provides scheduling functionalities for [ADORe](https://github.com/eclipse/adore) and its ROS interface. It contains the subprojects lib_adore_scheduling, adore_if_ros_scheduling_msg, adore_if_ros_scheduling and adore_scheduler.
+This repository provides scheduling functionalities for [ADORe](https://github.com/eclipse/adore) and its ROS interface. It contains the subprojects libadore_scheduling, adore_if_ros_scheduling_msg, adore_if_ros_scheduling and adore_scheduler.
 

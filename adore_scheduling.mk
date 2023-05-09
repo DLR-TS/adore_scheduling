@@ -1,43 +1,77 @@
 # This Makefile contains useful targets that can be included in downstream projects.
 
-ifndef adore_scheduling_MAKEFILE_PATH
+project:=adore_scheduling
+PROJECT:=$(shell echo ${project}| tr '[:lower:]' '[:upper:]')
+
+ifeq ($(call if,$(wildcard ${PROJECT}),),)
+${PROJECT}:
 
 MAKEFLAGS += --no-print-directory
 
 .EXPORT_ALL_VARIABLES:
-adore_scheduling_project=adore_scheduling
-ADORE_SCHEDULING_PROJECT=${adore_scheduling_project}
-
-adore_scheduling_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
-make_gadgets_PATH:=${adore_scheduling_MAKEFILE_PATH}/make_gadgets
-REPO_DIRECTORY:=${adore_scheduling_MAKEFILE_PATH}
-
-adore_scheduling_tag:=$(shell cd ${make_gadgets_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
-ADORE_SCHEDULING_TAG=${adore_scheduling_tag}
-
-adore_scheduling_image=${adore_scheduling_project}:${adore_scheduling_tag}
-ADORE_SCHEDULING_IMAGE=${adore_scheduling_image}
-
-include ${adore_scheduling_MAKEFILE_PATH}/adore_scheduler/adore_scheduler.mk
+${PROJECT}_PROJECT=${project}
 
 
-.PHONY: build_adore_scheduling 
-build_adore_scheduling: build_lib_adore_scheduling build_adore_if_ros_scheduling_msg build_adore_if_ros_scheduling build_adore_scheduler ## Build adore_scheduling
-	
+${PROJECT}_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
+ifeq ($(SUBMODULES_PATH),)
+    ${PROJECT}_SUBMODULES_PATH:=$(shell realpath "${${PROJECT}_MAKEFILE_PATH}")
+else
+    ${PROJECT}_SUBMODULES_PATH:=$(shell realpath ${SUBMODULES_PATH})
+endif
 
-.PHONY: clean_adore_scheduling
-clean_adore_scheduling: clean_lib_adore_scheduling clean_adore_if_ros_scheduling_msg clean_adore_if_ros_scheduling clean_adore_scheduler ## Clean adore_scheduling build artifacts
-	
+_SUBMODULES_PATH:=${${PROJECT}_SUBMODULES_PATH}
 
-.PHONY: branch_adore_scheduling
-branch_adore_scheduling: branch_lib_adore_scheduling branch_adore_if_ros_scheduling_msg branch_adore_if_ros_scheduling branch_adore_scheduler ## Returns the current docker safe/sanitized branch for the projects within adore_scheduling
-	
-.PHONY: image_adore_scheduling
-image_adore_scheduling: image_lib_adore_scheduling image_adore_if_ros_scheduling_msg image_adore_if_ros_scheduling image_adore_scheduler ## Returns the current docker image names for the projects within adore_scheduling
-	
+MAKE_GADGETS_PATH:=${${PROJECT}_SUBMODULES_PATH}/make_gadgets
+ifeq ($(wildcard $(MAKE_GADGETS_PATH)/*),)
+    $(info INFO: To clone submodules use: 'git submodules update --init --recursive')
+    $(info INFO: To specify alternative path for submodules use: SUBMODULES_PATH="<path to submodules>" make build')
+    $(info INFO: Default submodule path is: ${${PROJECT}_MAKEFILE_PATH}')
+    $(error "ERROR: ${MAKE_GADGETS_PATH} does not exist. Did you clone the submodules?")
+endif
 
-.PHONY: update_adore_scheduling
-update_adore_scheduling:
-	cd "${adore_scheduling_MAKEFILE_PATH}" && git pull
+REPO_DIRECTORY:=${${PROJECT}_MAKEFILE_PATH}
+${PROJECT}_TAG:=$(shell cd ${MAKE_GADGETS_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
+${PROJECT}_IMAGE:=${${PROJECT}_PROJECT}:${${PROJECT}_TAG}
+
+${PROJECT}_CMAKE_BUILD_PATH:="${${PROJECT}_PROJECT}/build"
+${PROJECT}_CMAKE_INSTALL_PATH:="${${PROJECT}_CMAKE_BUILD_PATH}/install"
+
+define PROJECT_RULE
+	$(eval TARGET_PREFIX := clean) 
+	$(eval TARGET := $@)
+    PROJECT := $(shell echo ${TARGET} | sed 's|${TARGET_PREFIX}_||g' | tr '[:lower:]' '[:upper:]')
+endef
+
+.PHONY: build_${project} 
+build_${project}: ## Build ${project} 
+	@$(eval $(PROJECT_RULE))
+	cd "${${PROJECT}_MAKEFILE_PATH}" && make build
+
+.PHONY: clean_${project}
+clean_${project}: ## Clean ${project} build artifacts
+	@$(eval $(PROJECT_RULE))
+	cd "${${PROJECT}_MAKEFILE_PATH}" && make clean
+
+.PHONY: branch_${project}
+branch_${project}: ## Returns the current docker safe/sanitized branch for ${project} 
+	@$(eval $(PROJECT_RULE))
+	@printf "%s\n" ${${PROJECT}_TAG}
+
+.PHONY: image_${project}
+image_${project}: ## Returns the current docker image name for ${project}
+	@$(eval $(PROJECT_RULE))
+	@printf "%s\n" ${${PROJECT}_IMAGE}
+
+include ${MAKE_GADGETS_PATH}/make_gadgets.mk
+include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
+
+
+include ${_SUBMODULES_PATH}/lizard_docker/lizard_docker.mk
+include ${_SUBMODULES_PATH}/cpplint_docker/cpplint_docker.mk
+include ${_SUBMODULES_PATH}/cppcheck_docker/cppcheck_docker.mk
+
+include ${_SUBMODULES_PATH}/adore_if_ros_scheduling_msg/adore_scheduler.mk
+#include ${_SUBMODULES_PATH}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
+#include ${_SUBMODULES_PATH}/libadore_scheduling/libadore_scheduling.mk
 
 endif

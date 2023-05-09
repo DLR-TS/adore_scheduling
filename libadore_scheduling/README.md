@@ -14,5 +14,5 @@
 ********************************************************************************
 -->
 
-# lib_adore_scheduling
+# libadore_scheduling
 This project contains scheduling functions for the scheduling of ADORe.

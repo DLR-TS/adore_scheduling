@@ -27,7 +27,7 @@ set(PACKAGE_MAINTAINER_EMAIL "ts-kos-sai@dlr.de")
 
 list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../lib_adore_scheduling/lib_adore_scheduling/build/install")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../libadore_scheduling/libadore_scheduling/build/install")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build/install")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../adore_if_ros_scheduling/adore_if_ros_scheduling/build/install")
 
@@ -43,7 +43,7 @@ include(Packing)
 
 
 find_package(adore_if_ros_scheduling_msg CONFIG REQUIRED)
-find_package(lib_adore_scheduling CONFIG REQUIRED)
+find_package(libadore_scheduling CONFIG REQUIRED)
 
 find_package(adore_if_ros_scheduling CONFIG REQUIRED)
 
@@ -69,7 +69,7 @@ target_include_directories(
       PRIVATE include 
         ${catkin_INCLUDE_DIRS}  
         ${CMAKE_PREFIX_PATH}
-        ../lib_adore_scheduling/lib_adore_scheduling/build/install/include
+        ../libadore_scheduling/libadore_scheduling/build/install/include
         ../adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg/build/install/include
         ${adore_if_ros_scheduling_INCLUDE_DIRS}
 )

@@ -16,7 +16,7 @@
 
 #include <adore_if_ros_scheduling/adore_if_ros_scheduling_constants.h>
 #include <adore_if_ros_scheduling/schedulernotificationconversion.h>
-#include <lib_adore_scheduling/aschedulernotificationmanager.h>
+#include <libadore_scheduling/aschedulernotificationmanager.h>
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 

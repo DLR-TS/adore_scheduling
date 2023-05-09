@@ -1,6 +1,6 @@
 # This Makefile contains useful targets that can be included in downstream projects.
 
-project:=adore_if_ros_scheduling
+project:=libadore_scheduling
 PROJECT:=$(shell echo ${project}| tr '[:lower:]' '[:upper:]')
 
 ifeq ($(call if,$(wildcard ${PROJECT}),),)
@@ -63,8 +63,5 @@ image_${project}: ## Returns the current docker image name for ${project}
 
 include ${MAKE_GADGETS_PATH}/make_gadgets.mk
 include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
-
-include ${_SUBMODULES_PATH}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
-include ${_SUBMODULES_PATH}/libadore_scheduling/libadore_scheduling.mk
 
 endif

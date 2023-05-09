@@ -3,7 +3,8 @@ ARG ADORE_IF_ROS_SCHEDULING_MSG_TAG
 ARG LIB_ADORE_SCHEDULING_TAG
 
 FROM adore_if_ros_scheduling_msg:${ADORE_IF_ROS_SCHEDULING_MSG_TAG} AS adore_if_ros_scheduling_msg
-FROM lib_adore_scheduling:${LIB_ADORE_SCHEDULING_TAG} AS lib_adore_scheduling
+FROM libadore_scheduling:${LIB_ADORE_SCHEDULING_TAG} AS libadore_scheduling
+
 FROM ros:noetic-ros-core-focal AS adore_if_ros_scheduling_requirements_base
 
 ARG PROJECT
@@ -19,8 +20,8 @@ ARG INSTALL_PREFIX=/tmp/${PROJECT}/${PROJECT}/build/install
 RUN mkdir -p "${INSTALL_PREFIX}"
 
 
-ARG LIB=lib_adore_scheduling
-COPY --from=lib_adore_scheduling /tmp/${LIB} /tmp/${LIB}
+ARG LIB=libadore_scheduling
+COPY --from=libadore_scheduling /tmp/${LIB} /tmp/${LIB}
 SHELL ["/bin/bash", "-c"]
 WORKDIR /tmp/${LIB}/${LIB}/build
 RUN cmake --install . --prefix ${INSTALL_PREFIX}
@@ -62,7 +63,7 @@ FROM alpine:3.14
 ARG PROJECT
 #COPY --from=adore_if_ros_scheduling_builder /tmp/${PROJECT} /tmp/${PROJECT}
 COPY --from=adore_if_ros_scheduling_builder /tmp/${PROJECT}/${PROJECT} /tmp/${PROJECT}/${PROJECT}
-COPY --from=adore_if_ros_scheduling_builder /tmp/lib_adore_scheduling /tmp/lib_adore_scheduling
+COPY --from=adore_if_ros_scheduling_builder /tmp/libadore_scheduling /tmp/libadore_scheduling
 COPY --from=adore_if_ros_scheduling_builder /tmp/adore_if_ros_scheduling_msg /tmp/adore_if_ros_scheduling_msg
 
 

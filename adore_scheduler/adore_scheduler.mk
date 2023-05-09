@@ -1,46 +1,70 @@
 # This Makefile contains useful targets that can be included in downstream projects.
 
-ifndef adore_scheduler_MAKEFILE_PATH
+project=adore_scheduler
+PROJECT=$(shell echo ${project}| tr '[:lower:]' '[:upper:]')
 
-MAKEFLAGS += --no-print-directory
+ifeq ($(call if,$(wildcard ${PROJECT}),),)
+${PROJECT}:
 
 .EXPORT_ALL_VARIABLES:
-adore_scheduler_project=adore_scheduler
-ADORE_SCHEDULER_PROJECT=${adore_scheduler_project}
+${PROJECT}_PROJECT=${project}
 
-adore_scheduler_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
-make_gadgets_PATH:=${adore_scheduler_MAKEFILE_PATH}/../make_gadgets
-REPO_DIRECTORY:=${adore_scheduler_MAKEFILE_PATH}
+${PROJECT}_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
+ifeq ($(SUBMODULES_PATH),)
+    ${PROJECT}_SUBMODULES_PATH:=$(shell realpath "${${PROJECT}_MAKEFILE_PATH}/..")
+else
+    ${PROJECT}_SUBMODULES_PATH:=$(shell realpath ${SUBMODULES_PATH})
+endif
 
-adore_scheduler_tag:=$(shell cd ${make_gadgets_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
-ADORE_SCHEDULER_TAG=${adore_scheduler_tag}
+_SUBMODULES_PATH:=${${PROJECT}_SUBMODULES_PATH}
 
-adore_scheduler_image=${adore_scheduler_project}:${adore_scheduler_tag}
-ADORE_SCHEDULER_IMAGE=${adore_scheduler_image}
+MAKE_GADGETS_PATH:=${${PROJECT}_SUBMODULES_PATH}/make_gadgets
+ifeq ($(wildcard $(MAKE_GADGETS_PATH)/*),)
+    $(info INFO: To clone submodules use: 'git submodules update --init --recursive')
+    $(info INFO: To specify alternative path for submodules use: SUBMODULES_PATH="<path to submodules>" make build')
+    $(info INFO: Default submodule path is: ${${PROJECT}_MAKEFILE_PATH}')
+    $(error "ERROR: ${MAKE_GADGETS_PATH} does not exist. Did you clone the submodules?")
+endif
 
-include ${adore_scheduler_MAKEFILE_PATH}/../adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
-include ${adore_scheduler_MAKEFILE_PATH}/../lib_adore_scheduling/lib_adore_scheduling.mk
-include ${adore_scheduler_MAKEFILE_PATH}/../adore_if_ros_scheduling/adore_if_ros_scheduling.mk
+REPO_DIRECTORY:=${${PROJECT}_MAKEFILE_PATH}
+${PROJECT}_TAG:=$(shell cd ${MAKE_GADGETS_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
+${PROJECT}_IMAGE:=${${PROJECT}_PROJECT}:${${PROJECT}_TAG}
 
+${PROJECT}_CMAKE_BUILD_PATH:="${${PROJECT}_PROJECT}/build"
+${PROJECT}_CMAKE_INSTALL_PATH:="${${PROJECT}_CMAKE_BUILD_PATH}/install"
 
-.PHONY: build_adore_scheduler 
-build_adore_scheduler: ## Build scheduler
-	cd "${adore_scheduler_MAKEFILE_PATH}" && make
+define PROJECT_RULE
+	$(eval TARGET_PREFIX := clean) 
+	$(eval TARGET := $@)
+    PROJECT := $(shell echo ${TARGET} | sed 's|${TARGET_PREFIX}_||g' | tr '[:lower:]' '[:upper:]')
+endef
 
-.PHONY: clean_adore_scheduler
-clean_adore_scheduler: ## Clean scheduler build artifacts
-	cd "${adore_scheduler_MAKEFILE_PATH}" && make clean
+.PHONY: build_${project} 
+build_${project}: ## Build ${project} 
+	@$(eval $(PROJECT_RULE))
+	cd "${${PROJECT}_MAKEFILE_PATH}" && make build
 
-.PHONY: branch_adore_scheduler
-branch_adore_scheduler: ## Returns the current docker safe/sanitized branch for scheduler
-	@printf "%s\n" ${adore_scheduler_tag}
+.PHONY: clean_${project}
+clean_${project}: ## Clean ${project} build artifacts
+	@$(eval $(PROJECT_RULE))
+	cd "${${PROJECT}_MAKEFILE_PATH}" && make clean
 
-.PHONY: image_adore_scheduler
-image_adore_scheduler: ## Returns the current docker image name for scheduler
-	@printf "%s\n" ${adore_scheduler_image}
+.PHONY: branch_${project}
+branch_${project}: ## Returns the current docker safe/sanitized branch for ${project} 
+	@$(eval $(PROJECT_RULE))
+	@printf "%s\n" ${${PROJECT}_TAG}
 
-.PHONY: update_adore_scheduler
-update_adore_scheduler:
-	cd "${adore_scheduler_MAKEFILE_PATH}" && git pull
+.PHONY: image_${project}
+image_${project}: ## Returns the current docker image name for ${project}
+	@$(eval $(PROJECT_RULE))
+	@printf "%s\n" ${${PROJECT}_IMAGE}
+
+include ${MAKE_GADGETS_PATH}/make_gadgets.mk
+include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
+
+#include ${ADORE_SCHEDULER_SUBMODULES_PATH}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
+#include ${ADORE_SCHEDULER_SUBMODULES_PATH}/libadore_scheduling/libadore_scheduling.mk
+include ${ADORE_SCHEDULER_SUBMODULES_PATH}/adore_if_ros_scheduling/adore_if_ros_scheduling.mk
+
 
 endif

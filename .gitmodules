@@ -10,3 +10,11 @@
 	path = cpplint_docker
 	url = git@github.com:DLR-TS/cpplint_docker.git
 	shallow = true
+[submodule "lizard_docker"]
+	path = lizard_docker
+	url = git@github.com:DLR-TS/lizard_docker.git
+	branch = master
+[submodule "make_module"]
+	path = make_module
+	url = git@github.com:DLR-TS/make_module.git
+	branch = master
