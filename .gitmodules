@@ -10,3 +10,6 @@
 	path = cpplint_docker
 	url = git@github.com:DLR-TS/cpplint_docker.git
 	shallow = true
+[submodule "lizard_docker"]
+	path = lizard_docker
+	url = git@github.com:DLR-TS/lizard_docker.git

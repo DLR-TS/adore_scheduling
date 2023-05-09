@@ -1,43 +1,48 @@
 # This Makefile contains useful targets that can be included in downstream projects.
 
-ifndef adore_scheduling_MAKEFILE_PATH
+ifeq ($(filter adore_scheduling.mk, $(notdir $(MAKEFILE_LIST))), adore_scheduling.mk)
 
 MAKEFLAGS += --no-print-directory
 
 .EXPORT_ALL_VARIABLES:
-adore_scheduling_project=adore_scheduling
-ADORE_SCHEDULING_PROJECT=${adore_scheduling_project}
+ADORE_SCHEDULING_PROJECT=adore_scheduling
 
-adore_scheduling_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
-make_gadgets_PATH:=${adore_scheduling_MAKEFILE_PATH}/make_gadgets
-REPO_DIRECTORY:=${adore_scheduling_MAKEFILE_PATH}
+ADORE_SCHEDULING_MAKEFILE_PATH:=$(shell realpath "$(shell dirname "$(lastword $(MAKEFILE_LIST))")")
+ifeq ($(SUBMODULES_PATH),)
+    ADORE_SCHEDULING_SUBMODULES_PATH:=${ADORE_SCHEDULING_MAKEFILE_PATH}
+else
+    ADORE_SCHEDULING_SUBMODULES_PATH:=$(shell realpath ${SUBMODULES_PATH})
+endif
+MAKE_GADGETS_PATH:=${ADORE_SCHEDULING_SUBMODULES_PATH}/make_gadgets
+ifeq ($(wildcard $(MAKE_GADGETS_PATH)/*),)
+    $(info INFO: To clone submodules use: 'git submodules update --init --recursive')
+    $(info INFO: To specify alternative path for submodules use: SUBMODULES_PATH="<path to submodules>" make build')
+    $(info INFO: Default submodule path is: ${ADORE_SCHEDULING_MAKEFILE_PATH}')
+    $(error "ERROR: ${MAKE_GADGETS_PATH} does not exist. Did you clone the submodules?")
+endif
+REPO_DIRECTORY:=${ADORE_SCHEDULING_MAKEFILE_PATH}
 
-adore_scheduling_tag:=$(shell cd ${make_gadgets_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
-ADORE_SCHEDULING_TAG=${adore_scheduling_tag}
+ADORE_SCHEDULING_TAG:=$(shell cd ${MAKE_GADGETS_PATH} && make get_sanitized_branch_name REPO_DIRECTORY=${REPO_DIRECTORY})
 
-adore_scheduling_image=${adore_scheduling_project}:${adore_scheduling_tag}
-ADORE_SCHEDULING_IMAGE=${adore_scheduling_image}
+ADORE_SCHEDULING_IMAGE=${ADORE_SCHEDULING_PROJECT}:${ADORE_SCHEDULING_TAG}
 
-include ${adore_scheduling_MAKEFILE_PATH}/adore_scheduler/adore_scheduler.mk
+ADORE_SCHEDULING_CMAKE_BUILD_PATH="${ADORE_SCHEDULING_PROJECT}/build"
+ADORE_SCHEDULING_CMAKE_INSTALL_PATH="${ADORE_SCHEDULING_CMAKE_BUILD_PATH}/install"
 
+
+include ${ADORE_SCHEDULING_MAKEFILE_PATH}/adore_scheduler/adore_scheduler.mk
+include ${MAKE_GADGETS_PATH}/make_gadgets.mk
+
+include ${ADORE_SCHEDULING_SUBMODULES_PATH}/cpplint_docker/cpplint_docker.mk
+include ${ADORE_SCHEDULING_SUBMODULES_PATH}/cppcheck_docker/cppcheck_docker.mk
+include ${ADORE_SCHEDULING_SUBMODULES_PATH}/lizard_docker/lizard_docker.mk
 
 .PHONY: build_adore_scheduling 
-build_adore_scheduling: build_lib_adore_scheduling build_adore_if_ros_scheduling_msg build_adore_if_ros_scheduling build_adore_scheduler ## Build adore_scheduling
-	
+build_adore_scheduling: ## Build adore_scheduling
+	cd "${ADORE_SCHEDULING_MAKEFILE_PATH}" && make build
 
 .PHONY: clean_adore_scheduling
-clean_adore_scheduling: clean_lib_adore_scheduling clean_adore_if_ros_scheduling_msg clean_adore_if_ros_scheduling clean_adore_scheduler ## Clean adore_scheduling build artifacts
-	
-
-.PHONY: branch_adore_scheduling
-branch_adore_scheduling: branch_lib_adore_scheduling branch_adore_if_ros_scheduling_msg branch_adore_if_ros_scheduling branch_adore_scheduler ## Returns the current docker safe/sanitized branch for the projects within adore_scheduling
-	
-.PHONY: image_adore_scheduling
-image_adore_scheduling: image_lib_adore_scheduling image_adore_if_ros_scheduling_msg image_adore_if_ros_scheduling image_adore_scheduler ## Returns the current docker image names for the projects within adore_scheduling
-	
-
-.PHONY: update_adore_scheduling
-update_adore_scheduling:
-	cd "${adore_scheduling_MAKEFILE_PATH}" && git pull
+clean_adore_scheduling: ## Clean adore_scheduling build artifacts
+	cd "${ADORE_SCHEDULING_MAKEFILE_PATH}" && make clean
 
 endif

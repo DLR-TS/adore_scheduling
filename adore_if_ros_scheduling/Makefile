@@ -6,8 +6,6 @@ SHELL:=/bin/bash
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
 MAKEFILE_PATH:=$(shell dirname "$(abspath "$(lastword $(MAKEFILE_LIST)"))")
 
-include ../make_gadgets/make_gadgets.mk
-include ../make_gadgets/docker/docker-tools.mk
 include adore_if_ros_scheduling.mk
 
 MAKEFLAGS += --no-print-directory
@@ -26,7 +24,7 @@ set_env:
 	$(eval TAG := ${ADORE_IF_ROS_SCHEDULING_TAG})
 
 .PHONY: build 
-build: root_check docker_group_check set_env clean ## Build adore_if_ros_scheduling 
+build: root_check docker_group_check set_env build_adore_if_ros_scheduling_msg build_lib_adore_scheduling clean ## Build adore_if_ros_scheduling 
 	docker build --network host \
                  --tag ${PROJECT}:${TAG} \
                  --build-arg PROJECT=${PROJECT} \

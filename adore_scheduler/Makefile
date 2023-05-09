@@ -4,10 +4,7 @@ SHELL:=/bin/bash
 .DEFAULT_GOAL := all
 
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
-MAKEFILE_PATH:=$(shell dirname "$(abspath "$(lastword $(MAKEFILE_LIST)"))")
 
-include ../make_gadgets/make_gadgets.mk
-include ../make_gadgets/docker/docker-tools.mk
 include adore_scheduler.mk
 
 MAKEFLAGS += --no-print-directory
@@ -26,7 +23,7 @@ set_env:
 	$(eval TAG := ${ADORE_SCHEDULER_TAG})
 
 .PHONY: build 
-build: root_check docker_group_check set_env clean ## Build scheduler 
+build: root_check docker_group_check set_env build_adore_if_ros_scheduling clean ## Build scheduler 
 	docker build --network host \
                  --tag ${PROJECT}:${TAG} \
                  --build-arg PROJECT=${PROJECT} \
