@@ -45,4 +45,12 @@ build_adore_scheduling: ## Build adore_scheduling
 clean_adore_scheduling: ## Clean adore_scheduling build artifacts
 	cd "${ADORE_SCHEDULING_MAKEFILE_PATH}" && make clean
 
+.PHONY: branch_adore_scheduling
+branch_adore_scheduling: ## Returns the current docker safe/sanitized branch for adore_scheduling 
+	@printf "%s\n" ${ADORE_SCHEDULING_TAG}
+
+.PHONY: image_adore_scheduling
+image_adore_scheduling: ## Returns the current docker image name for adore_scheduling
+	@printf "%s\n" ${ADORE_SCHEDULING_IMAGE}
+
 endif

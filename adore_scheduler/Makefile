@@ -23,7 +23,7 @@ set_env:
 	$(eval TAG := ${ADORE_SCHEDULER_TAG})
 
 .PHONY: build 
-build: root_check docker_group_check set_env build_adore_if_ros_scheduling clean ## Build scheduler 
+build: root_check docker_group_check set_env build_adore_if_ros_scheduling ## Build scheduler 
 	docker build --network host \
                  --tag ${PROJECT}:${TAG} \
                  --build-arg PROJECT=${PROJECT} \
@@ -33,7 +33,7 @@ build: root_check docker_group_check set_env build_adore_if_ros_scheduling clean
 	docker cp $$(docker create --rm ${PROJECT}:${TAG}):/tmp/${PROJECT}/${PROJECT}/build "${ROOT_DIR}/${PROJECT}"
 
 .PHONY: clean
-clean: set_env ## Clean scheduler build artifacts 
+clean: clean_adore_if_ros_scheduling set_env ## Clean scheduler build artifacts 
 	rm -rf "${ROOT_DIR}/${PROJECT}/build"
 	docker rm $$(docker ps -a -q --filter "ancestor=${PROJECT}:${TAG}") --force 2> /dev/null || true
 	docker rmi $$(docker images -q ${PROJECT}:${TAG}) --force 2> /dev/null || true
