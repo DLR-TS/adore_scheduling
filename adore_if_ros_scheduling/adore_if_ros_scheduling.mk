@@ -31,8 +31,10 @@ ADORE_IF_ROS_SCHEDULING_CMAKE_INSTALL_PATH="${ADORE_IF_ROS_SCHEDULING_CMAKE_BUIL
 
 include ${MAKE_GADGETS_PATH}/make_gadgets.mk
 include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
-include ${ADORE_IF_ROS_SCHEDULING_SUBMODULES_PATH}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
-include ${ADORE_IF_ROS_SCHEDULING_SUBMODULES_PATH}/lib_adore_scheduling/lib_adore_scheduling.mk
+
+ADORE_SCHEDULER_PATH:=$(shell realpath "${ADORE_SCHEDULER_MAKEFILE_PATH}/..")
+include ${ADORE_SCHEDULER_PATH}/adore_if_ros_scheduling_msg/adore_if_ros_scheduling_msg.mk
+include ${ADORE_SCHEDULER_PATH}/lib_adore_scheduling/lib_adore_scheduling.mk
 
 .PHONY: build_adore_if_ros_scheduling 
 build_adore_if_ros_scheduling: ## Build adore_if_ros_scheduling

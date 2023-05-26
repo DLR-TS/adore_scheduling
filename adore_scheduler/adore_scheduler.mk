@@ -31,7 +31,9 @@ ADORE_SCHEDULER_CMAKE_INSTALL_PATH="${ADORE_SCHEDULER_CMAKE_BUILD_PATH}/install"
 
 include ${MAKE_GADGETS_PATH}/make_gadgets.mk
 include ${MAKE_GADGETS_PATH}/docker/docker-tools.mk
-include ${ADORE_SCHEDULER_SUBMODULES_PATH}/adore_if_ros_scheduling/adore_if_ros_scheduling.mk
+
+ADORE_SCHEDULER_PATH:=$(shell realpath "${ADORE_SCHEDULER_MAKEFILE_PATH}/..")
+include ${ADORE_SCHEDULER_PATH}/adore_if_ros_scheduling/adore_if_ros_scheduling.mk
 
 .PHONY: build_adore_scheduler 
 build_adore_scheduler: ## Build scheduler
