@@ -17,3 +17,17 @@
 # adore_scheduling
 This repository provides scheduling functionalities for [ADORe](https://github.com/eclipse/adore) and its ROS interface. It contains the subprojects lib_adore_scheduling, adore_if_ros_scheduling_msg, adore_if_ros_scheduling and adore_scheduler.
 
+## Build Status
+[![CI](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml/badge.svg)](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml)
+
+## Getting Started
+You must have make and docker installed.
+
+1. git clone with submodules:
+```bash
+git clone git clone --recursive -j8 git@github.com:DLR-TS/adore_scheduling.git
+```
+2. build
+```bash
+make build
+```
