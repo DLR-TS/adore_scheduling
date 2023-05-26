@@ -36,7 +36,7 @@ clean: set_env clean_adore_scheduler
 	rm -rf ${ROOT_DIR}/${PROJECT}
 
 .PHONY: ci_build
-ci_build: build docker_compose_build
+ci_build: build
 
 .PHONY: test
 test: ci_test
