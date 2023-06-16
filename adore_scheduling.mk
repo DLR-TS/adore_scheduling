@@ -53,4 +53,11 @@ branch_adore_scheduling: ## Returns the current docker safe/sanitized branch for
 image_adore_scheduling: ## Returns the current docker image name for adore_scheduling
 	@printf "%s\n" ${ADORE_SCHEDULING_IMAGE}
 
+.PHONY: images_adore_scheduling
+images_adore_scheduling: ## Returns the current docker image name for adore_scheduling
+	@printf "%s\n" "${ADORE_SCHEDULING_IMAGE}"
+	@printf "%s\n" "adore_if_ros_scheduling:${ADORE_SCHEDULING_TAG}"
+	@printf "%s\n" "lib_adore_scheduling:${ADORE_SCHEDULING_TAG}"
+	@printf "%s\n" "adore_if_ros_scheduling_msg:${ADORE_SCHEDULING_TAG}"
+
 endif
