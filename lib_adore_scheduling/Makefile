@@ -24,7 +24,7 @@ set_env:
 	$(eval TAG := ${LIB_ADORE_SCHEDULING_TAG})
 
 .PHONY: build 
-build: root_check docker_group_check set_env clean ## Build lib_adore_scheduling 
+build: set_env clean ## Build lib_adore_scheduling 
 	docker build --network host \
                  --tag ${PROJECT}:${TAG} \
                  --build-arg PROJECT=${PROJECT} .

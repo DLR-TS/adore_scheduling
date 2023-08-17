@@ -23,7 +23,7 @@ set_env:
 	$(eval TAG := ${ADORE_SCHEDULER_TAG})
 
 .PHONY: build 
-build: root_check docker_group_check set_env build_adore_if_ros_scheduling ## Build scheduler 
+build: set_env build_adore_if_ros_scheduling ## Build scheduler 
 	docker build --network host \
                  --tag ${PROJECT}:${TAG} \
                  --build-arg PROJECT=${PROJECT} \
