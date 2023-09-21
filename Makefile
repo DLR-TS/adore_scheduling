@@ -15,7 +15,7 @@ DOCKER_CONFIG?=
 
 SUBMODULES_PATH?=${ROOT_DIR}
 
-include ${SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
+include ${ADORE_SCHEDULING_SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
 
 CPP_PROJECT_DIRECTORY=${ROOT_DIR}
 
