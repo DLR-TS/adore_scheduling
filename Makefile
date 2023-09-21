@@ -4,7 +4,6 @@ SHELL:=/bin/bash
 
 ROOT_DIR:=$(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
 
-include ${ROOT_DIR}/adore_scheduling.mk
 
 MAKEFLAGS += --no-print-directory
 
@@ -15,6 +14,7 @@ DOCKER_CONFIG?=
 
 SUBMODULES_PATH?=${ROOT_DIR}
 
+include ${ROOT_DIR}/adore_scheduling.mk
 include ${ADORE_SCHEDULING_SUBMODULES_PATH}/ci_teststand/ci_teststand.mk
 
 CPP_PROJECT_DIRECTORY=${ROOT_DIR}
