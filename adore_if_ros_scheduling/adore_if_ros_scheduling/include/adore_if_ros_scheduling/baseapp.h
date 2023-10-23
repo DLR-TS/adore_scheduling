@@ -49,9 +49,21 @@ namespace adore_if_ros_scheduling
             snm_->notifyScheduler(ros::Time::now().sec, ros::Time::now().nsec);
         }
         /**
-         * init - initializes the ros node
+         * notifyNow - invoke notifyScheduler fcn manually
          *
          */
+        void notifyNow()
+        {
+            snm_->notifyScheduler(ros::Time::now().sec, ros::Time::now().nsec);
+        }
+        /**
+         * deleteTimers - delete all timers
+         *
+         */
+        void deleteTimers()
+        {
+            timers_.clear();
+        }
         void init(int argc, char **argv, double rate, std::string nodename)
         {
             rate_ = rate;
