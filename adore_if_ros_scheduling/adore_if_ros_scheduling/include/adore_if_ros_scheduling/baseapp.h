@@ -64,6 +64,10 @@ namespace adore_if_ros_scheduling
         {
             timers_.clear();
         }
+        /**
+         * init - initializes the ros node
+         *
+         */
         void init(int argc, char **argv, double rate, std::string nodename)
         {
             rate_ = rate;
