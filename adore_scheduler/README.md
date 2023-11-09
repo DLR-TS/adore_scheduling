@@ -14,5 +14,4 @@
 ********************************************************************************
 -->
 
-# adore_scheduler
-This project contains the ROS node for the scheduling of adore_if_ros.
+see the README.md file in the parent folder
