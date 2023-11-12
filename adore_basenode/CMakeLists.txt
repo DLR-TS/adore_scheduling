@@ -38,7 +38,6 @@ target_include_directories(adore_basenode
 ament_target_dependencies(adore_basenode rclcpp adore_ros2_msgs)
 
 
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

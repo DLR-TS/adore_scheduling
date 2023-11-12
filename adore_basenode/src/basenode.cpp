@@ -15,24 +15,37 @@
 
 #include <adore_basenode/basenode.h>
 
-
 namespace adore
 {
-    namespace scheduling{
-    BaseNode::BaseNode(std::string node_name)
-    : rclcpp::Node(node_name)
+    namespace scheduling
     {
-        m_node = this;
-    }
+        BaseNode::BaseNode(std::chrono::nanoseconds duration_between_function_calls, std::string node_name)
+            : rclcpp::Node(node_name), useScheduler_(true)
+        {
+            init(duration_between_function_calls);
+        }
 
-    
         inline void BaseNode::schedulerCallback()
         {
-            for(auto it = m_callbacks.begin(); it != m_callbacks.end(); ++it)
+            for (auto it = m_callbacks.begin(); it != m_callbacks.end(); ++it)
             {
-                (**it)();
+                if (it->first.first != 1)
+                {
+                    if (it->first.second == 0)
+                    {
+                        it->first.second = it->first.first - 1;
+                    }
+                    else
+                    {
+                        --it->first.second;
+                        continue;
+                    }
+                }
+                (*(it->second))();
+                //(**it)();
             }
-            m_snm->notifyScheduler(m_node->now().nanoseconds());
+            if (useScheduler_)
+                m_snm->notifyScheduler(m_node->now().nanoseconds());
         }
         /**
          * notifyNow - invoke notifyScheduler fcn manually
@@ -46,29 +59,28 @@ namespace adore
          * init - initializes the ros node
          *
          */
-        void BaseNode::init(int argc, char **argv, double rate, std::string nodename)
+        void BaseNode::init(std::chrono::nanoseconds duration_between_function_calls)
         {
-            rate_ = rate;
-           /* m_pN->param(adore::scheduling::PARAM_NAME_USE_SCHEDULER, useScheduler_, false);
+            m_node = this;
+
+            m_time_between_function_calls = std::chrono::duration_cast<std::chrono::nanoseconds>(duration_between_function_calls);
+            /* m_pN->param(adore::scheduling::PARAM_NAME_USE_SCHEDULER, useScheduler_, false);
             {
                 ros::NodeHandle np("~");
                 np.getParam("rate", rate_);
             }*/
-            if (rate == 0.0) useScheduler_ = false;
-        }
-        /**
-         * initSim - intilizes functionalites for simulation
-         *
-         */
-        void BaseNode::initSim()
-        {
+            auto ros_clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+            timer_ = rclcpp::create_timer(m_node, this->get_clock(), m_time_between_function_calls, std::bind(&BaseNode::schedulerCallback, this));
+
+            // timer_ = m_node->create_wall_timer(
+            //         m_time_between_function_calls, std::bind(&BaseNode::schedulerCallback, this));
+            if (m_time_between_function_calls.count() == 0)
+                useScheduler_ = false;
             if (useScheduler_)
             {
-                m_snm = new adore_if_ros_scheduling::SchedulerNotificationManager(
+                m_snm = new adore::scheduling::SchedulerNotificationManager(
                     m_node, std::hash<std::string>{}(std::string(m_node->get_namespace()) + std::string(m_node->get_name())),
-                    (uint32_t)(1e9 / rate_));
-                timer_ = m_node->create_wall_timer(
-                    std::chrono::duration<uint32_t,std::ratio<static_cast<long int>(1e9)>>(m_snm->getDurationInNanoSeconds()), std::bind(&BaseNode::schedulerCallback, this));
+                    m_time_between_function_calls);
                 m_snm->publishClientName(std::string(m_node->get_namespace()) + std::string(m_node->get_name()));
             }
         }
@@ -85,22 +97,18 @@ namespace adore
          */
         void BaseNode::run()
         {
-            //rclcpp::init(argc, argv);
-            //rclcpp::spin(std::make_shared<MinimalPublisher>());
+            // rclcpp::init(argc, argv);
+            // rclcpp::spin(std::make_shared<MinimalPublisher>());
             rclcpp::shutdown();
         }
         /**
          * addTimerCallback - add a function that should be called periodically
          */
-        void BaseNode::addTimerCallback(std::function<void()> *callbackFcn)
+        void BaseNode::addTimerCallback(std::shared_ptr<std::function<void()>> callbackFcn, unsigned int frequency_divisor)
         {
-            m_callbacks.push_back(callbackFcn);
-        //inline static void func(std::function<void()> &callback);
-        //    timers_.push_back(m_pN->createTimer(ros::Duration(1 / rate_ / rate_factor),
-        //                                        std::bind(&func, callbackFcn, std::placeholders::_1)));
+            m_callbacks.push_back(std::make_pair(std::make_pair(frequency_divisor, frequency_divisor - 1), callbackFcn));
+
         }
 
-     
-        inline static void func(std::function<void()> &callback);
-}  // namespace adore_if_ros_scheduling
+    } // namespace adore_if_ros_scheduling
 }

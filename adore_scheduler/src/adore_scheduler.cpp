@@ -33,9 +33,10 @@
 
 namespace adore
 {
-namespace scheduling{
+    namespace scheduling
+    {
 
-        bool TimeMsgComp::operator()(const builtin_interfaces::msg::Time& obj_left,const builtin_interfaces::msg::Time& obj_right) const
+        bool TimeMsgComp::operator()(const builtin_interfaces::msg::Time &obj_left, const builtin_interfaces::msg::Time &obj_right) const
         {
             if (obj_left.sec < obj_right.sec)
             {
@@ -48,7 +49,7 @@ namespace scheduling{
             return false;
         }
 
-        bool less_than(builtin_interfaces::msg::Time const& obj_left, builtin_interfaces::msg::Time const& obj_right)
+        bool less_than(builtin_interfaces::msg::Time const &obj_left, builtin_interfaces::msg::Time const &obj_right)
         {
             if (obj_left.sec < obj_right.sec)
             {
@@ -60,19 +61,16 @@ namespace scheduling{
             }
             return false;
         }
-        bool equals(builtin_interfaces::msg::Time const& obj_left, builtin_interfaces::msg::Time const& obj_right)
+        bool equals(builtin_interfaces::msg::Time const &obj_left, builtin_interfaces::msg::Time const &obj_right)
         {
             return obj_left.sec == obj_right.sec && obj_left.nanosec == obj_right.nanosec;
         }
 
-        
-        
+        /**
+         * @brief Scheduler is a class which provides functionality for stepped simulation
+         *
+         */
 
-    /**
-     * @brief Scheduler is a class which provides functionality for stepped simulation
-     *
-     */
-    
         void Scheduler::updateSchedule(uint64_t ri, builtin_interfaces::msg::Time cl)
         {
             for (auto it = m_schedule->begin(); it != m_schedule->end(); ++it)
@@ -92,7 +90,7 @@ namespace scheduling{
         }
 
         Scheduler::Scheduler(int minRegisters, bool autostart)
-        : rclcpp::Node("adore_scheduler_node")
+            : rclcpp::Node("adore_scheduler_node")
         {
             m_schedule = new ScheduleMap();
 
@@ -100,14 +98,14 @@ namespace scheduling{
                 this->create_subscription<adore_ros2_msgs::msg::SchedulerNotification>(
                     adore::scheduling::TOPIC_NAME_SCHEDULER_NOTIFICATION, 1000,
                     std::bind(&Scheduler::updateClientUpperTimeLimit, this, std::placeholders::_1));
-                
-            m_clientNameReader = 
+
+            m_clientNameReader =
                 this->create_subscription<std_msgs::msg::String>(
                     adore::scheduling::TOPIC_NAME_CLIENT_NAME, 1000,
                     std::bind(&Scheduler::saveClientName, this, std::placeholders::_1));
-            m_simulationTimeWriter = 
+            m_simulationTimeWriter =
                 this->create_publisher<std_msgs::msg::Float64>(adore::scheduling::TOPIC_NAME_SIMULATION_TIME, 1);
-            m_clockTimeWriter = 
+            m_clockTimeWriter =
                 this->create_publisher<rosgraph_msgs::msg::Clock>(adore::scheduling::TOPIC_NAME_CLOCK_TIME, 1);
             m_now = getTimeMessage();
             m_now_clockmsg = rosgraph_msgs::msg::Clock();
@@ -122,6 +120,7 @@ namespace scheduling{
             m_limitSimulationSpeed = false;
             m_printIntervalS = 10;
             m_timeMsgComp = TimeMsgComp();
+            init();
         }
 
         builtin_interfaces::msg::Time Scheduler::getTimeMessage()
@@ -131,7 +130,6 @@ namespace scheduling{
             t.nanosec = 0;
             return t;
         }
-     
 
         /**
          * init
@@ -163,7 +161,7 @@ namespace scheduling{
         /**
          * set new simulation and clock time
          */
-        inline void Scheduler::setNewTime(bool incrementalIncrease/* = false*/)
+        inline void Scheduler::setNewTime(bool incrementalIncrease /* = false*/)
         {
             if (!m_schedule->empty())
             {
@@ -261,8 +259,8 @@ namespace scheduling{
         {
             std::chrono::system_clock::time_point newWallTime = std::chrono::system_clock::now();
             double speedfactor =
-                (static_cast<double>(m_now.nanosec) + (static_cast<double>(m_now.sec)) * 1e-9 -
-                 static_cast<double>(m_lastRosTime.nanosec) - (static_cast<double>(m_lastRosTime.sec)) * 1e-9) /
+                (static_cast<double>(m_now.nanosec) + (static_cast<double>(m_now.sec)) * 1e9 -
+                 static_cast<double>(m_lastRosTime.nanosec) - (static_cast<double>(m_lastRosTime.sec)) * 1e9) /
                 (std::chrono::duration_cast<std::chrono::nanoseconds>(newWallTime - m_lastWallTime).count());
             std::cout << "time = " << m_now.sec << "." << std::setfill('0') << std::setw(9) << m_now.nanosec
                       << "; rel. simulation speed = " << speedfactor << std::endl;
@@ -306,10 +304,55 @@ namespace scheduling{
             m_started = true;
             setNewTime(true);
         }
-} // namespace adore_if_ros_scheduling
+    } // namespace adore_if_ros_scheduling
 
 }
-int main()
+
+std::shared_ptr<adore::scheduling::Scheduler> scheduler;
+bool terminated;
+void kbinput()
 {
+    while (!terminated)
+    {
+        char c = std::cin.get();
+        switch (c)
+        {
+        case 's':
+        {
+            scheduler->start();
+        }
+        break;
+        case 'p':
+        {
+            scheduler->togglePause();
+        }
+        break;
+        case 'i':
+        {
+            scheduler->printInfo();
+        }
+        break;
+        case 'l':
+        {
+            scheduler->limitSimulationSpeed();
+        }
+        break;
+        }
+    }
+}
+
+int main(int argc, char *argv[])
+{
+
+    rclcpp::init(argc, argv);
+
+    scheduler = std::make_shared<adore::scheduling::Scheduler>(0, false);
+    terminated = false;
+    std::thread kbinput_thread(kbinput);
+    rclcpp::spin(scheduler);
+    terminated = true;
+    kbinput_thread.join();
+    rclcpp::shutdown();
+
     return 0;
 }
