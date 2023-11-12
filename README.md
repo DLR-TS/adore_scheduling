@@ -15,7 +15,7 @@
 -->
 
 # adore_scheduling
-This repository provides scheduling functionalities for [ADORe](https://github.com/eclipse/adore) and its ROS interface. It contains the two ROS2 packages adore_basenode and adore_scheduler. Together they allow a stepped simulation of ADORe.
+This repository provides scheduling functionalities for [ADORe](https://github.com/eclipse/adore). It contains the two ROS2 packages adore_basenode and adore_scheduler. Together they allow a stepped simulation of ADORe.
 
 ## Build Status
 [![CI](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml/badge.svg)](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml)
@@ -32,15 +32,49 @@ git clone git clone --recursive -j8 git@github.com:DLR-TS/adore_scheduling.git
 make build
 ```
 ## adore_basenode
-adore_basenode is a library that provides the class `adore::scheduling::BaseNode`. It is recommended to use the class as a parent class for ROS2 nodes. This enables communication with adore_scheduler needed for stepped simulations. However, it does not hinder the possiblity of classical non-stepped simulation. An example of the use of this class is shown in the following source code:
+adore_basenode is a library that provides the class `adore::scheduling::BaseNode`. It is recommended to use the class as a parent class for ROS2 nodes. This enables the communication with adore_scheduler needed for stepped simulations. However, it does not hinder the possiblity of classical non-stepped simulation. An example of the use of this class is shown in the following source code:
+
 
 ```c++
-        void BaseNode::addTimerCallback(std::shared_ptr<std::function<void()>> callbackFcn, unsigned int frequency_divisor)
-        {
-            m_callbacks.push_back(std::make_pair(std::make_pair(frequency_divisor, frequency_divisor - 1), callbackFcn));
+#include <adore_basenode/basenode.h>
 
-        }
+class ExampleNode : public adore::scheduling::BaseNode
+{
+public:
+    ExampleNode(std::chrono::milliseconds duration_between_fcn_calls, std::string nodename)
+        : adore::scheduling::BaseNode(duration_between_fcn_calls, nodename)
+    {
+        publisher_ = this->create_publisher<std_msgs::msg::String>("example_topic", 10);
+        auto run_fcn_1 = std::make_shared<std::function<void()>>(std::bind(&ExampleNode::timer_callback_1, this));
+        BaseNode::addTimerCallback(run_fcn_1);
+        last_time_1 = 0;
+    }
+
+private:
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+    double last_time_1;
+    void timer_callback_1()
+    {
+        auto message = std_msgs::msg::String();
+        double now = this->now().seconds();
+        message.data = "freqDivisor = 1 " + std::to_string(now - last_time_1);
+        last_time_1 = now;
+        publisher_->publish(message);
+        std::cout << message.data << std::endl;
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<ExampleNode>(std::chrono::milliseconds(100), "examplenode"));
+    rclcpp::shutdown();
+    return 0;
+}
 ```
 
+Here, `ExampleNode` has one visible callback. A second callback which is called directly by the `BaseNode` is not visible. This second callback is to inform the scheduler that the execution is finished for the current point in time. `callback_1` is added using the `BaseNode::addTimerCallback` function. This type of callback definition ensures that the scheduler is only notified once all callbacks added in this way have been completed. When adding callbacks directly as, e.g., via `rclcpp::create_timer(...)`, the order of execution is not guaranteed, the callback to notify the scheduler could be called before the callback that performs any actual tasks. Callbacks added via `BaseNode::addTimerCallback` are always executed in the order in which they were added via this function. The function has an optional argument, `BaseNode::addTimerCallback(callback, frquency_divisor = 1)`. If frequency_divisor is set, the corresponding callback is called with accordingly reduced frequency.
 
-Here, ExampleNode has two visible callbacks, callback_1 and callback_2. A third callback, which is called directly by the BaseNode, is not visible. The scheduler is notified within this callback so that the latter can increase the time signal. callback_1 is added using the BaseNode::addTimerCallback function. This type of callback definition ensures that the scheduler is only notified once all callbacks added in this way have been completed. When adding directly via XYZ, as in the example with callback_2, this is not guaranteed, so that the scheduler can be notified before or after callback_2 is called. Callbacks added via BaseNode::addTimerCallback are always executed in the order in which they were added via BaseNode::addTimerCallback. The method has an optional argument, BaseNode::addTimerCallback(callback, frquency_divisor = 1). If frequency_divisor is set, the corresponding callback is called with accordingly reduced frequency.
+## adore_scheduler
+
+to do
