@@ -45,7 +45,6 @@ namespace adore
             SchedulerNotificationManager(rclcpp::Node *node, unsigned int id, std::chrono::nanoseconds time_between_function_calls, bool reg = true)
                 : m_NANOS_PER_SECOND(1e9)
             {
-                // m_duration = std::chrono::duration_cast<std::chrono::nanoseconds>(time_between_function_calls);
                 m_duration = time_between_function_calls;
                 m_duration_in_nanoseconds = m_duration.count();
                 m_clientNameWriter = node->create_publisher<std_msgs::msg::String>(adore::scheduling::TOPIC_NAME_CLIENT_NAME, 1);
@@ -58,7 +57,9 @@ namespace adore
                 m_sn.setID(id);
                 std::cout << "scheduler id : " << id << std::endl;
                 if (reg)
+                {
                     registerAtScheduler();
+                }
             }
             void publishClientName(std::string name)
             {
@@ -89,12 +90,15 @@ namespace adore
                     m_notificationWriter->publish(m_sn.getMessage());
                 }
             }
-            void pause() { m_pause = true; }
+            void pause()
+            {
+                m_pause = true;
+            }
             void resume()
             {
                 m_pause = false;
                 m_notificationWriter->publish(m_sn.getMessage());
             }
         };
-    } // namespace adore_if_ros_scheduling
+    }
 }
