@@ -72,5 +72,5 @@ namespace adore
              */
             void addTimerCallback(std::shared_ptr<std::function<void()>> callbackFcn, unsigned int frequency_divisor = 1);
         };
-    } // namespace adore_if_ros_scheduling
+    }
 }

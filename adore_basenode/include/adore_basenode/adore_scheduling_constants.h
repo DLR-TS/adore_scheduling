@@ -15,7 +15,7 @@
 #pragma once
 
 /**
- * this header provides constants used in the adore_if_ros_scheduling project
+ * this header provides constants used in the adore::scheduling project
  */
 namespace adore
 {

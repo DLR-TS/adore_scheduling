@@ -304,7 +304,7 @@ namespace adore
             m_started = true;
             setNewTime(true);
         }
-    } // namespace adore_if_ros_scheduling
+    }
 
 }
 

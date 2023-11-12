@@ -120,5 +120,5 @@ namespace adore
             m_callbacks.push_back(std::make_pair(std::make_pair(frequency_divisor, frequency_divisor - 1), callbackFcn));
         }
 
-    } // namespace adore_if_ros_scheduling
+    }
 }

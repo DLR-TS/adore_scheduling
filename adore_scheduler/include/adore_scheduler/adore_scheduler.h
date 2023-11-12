@@ -142,5 +142,5 @@ namespace adore
              */
             void start();
         };
-    } // namespace adore_if_ros_scheduling
+    }
 }
