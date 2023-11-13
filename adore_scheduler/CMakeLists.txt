@@ -20,17 +20,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake REQUIRED)
+#find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rosgraph_msgs REQUIRED)
-find_package(adore_ros2_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(builtin_interfaces REQUIRED)
-find_package(adore_basenode REQUIRED)
-
+#find_package(rclcpp REQUIRED)
+#find_package(rosgraph_msgs REQUIRED)
+#find_package(adore_ros2_msgs REQUIRED)
+#find_package(std_msgs REQUIRED)
+#find_package(builtin_interfaces REQUIRED)
+#find_package(adore_basenode REQUIRED)
+include(requirements.cmake)
 
 
 add_executable(adore_scheduler_node src/adore_scheduler.cpp)
