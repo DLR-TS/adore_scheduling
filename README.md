@@ -1,5 +1,5 @@
 <!--
-********************************************************************************
+********************************al objects std::cout and std::wcout control output to a stream buffer of implementation-defined type (derived from std::streambuf), associated with the standard C output stream stdout. ************************************************
 * Copyright (C) 2017-2023 German Aerospace Center (DLR). 
 * Eclipse ADORe, Automated Driving Open Research https://eclipse.org/adore
 *
@@ -19,7 +19,7 @@ This repository provides scheduling functionalities for [ADORe](https://github.c
 
 ## Build Status
 [![CI](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml/badge.svg)](https://github.com/DLR-TS/adore_scheduling/actions/workflows/ci.yaml)
-
+<!--
 ## Getting Started
 You must have make and docker installed.
 
@@ -31,8 +31,10 @@ git clone git clone --recursive -j8 git@github.com:DLR-TS/adore_scheduling.git
 ```bash
 make build
 ```
+-->
+
 ## adore_basenode
-adore_basenode is a library that provides the class `adore::scheduling::BaseNode`. It is recommended to use the class as a parent class for ROS2 nodes. This enables the communication with adore_scheduler needed for stepped simulations. However, it does not hinder the possiblity of classical non-stepped simulation. An example of the use of this class is shown in the following source code:
+adore_basenode is a library that provides the class `adore::scheduling::BaseNode`. It is recommended to use the class as a parent class for ROS2 nodes. This enables the communication with adore_scheduler needed for stepped simulations. However, it does not hinder the possiblity of classical non-stepped simulation. The constructor takes the time between two consequtive starts of the periodically called run loop  of type `std::chrono::duration` (any typedef) and the node name of type `std::string`. An example of the use of this class is shown in the following source code:
 
 
 ```c++
@@ -73,8 +75,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-Here, `ExampleNode` has one visible callback. A second callback which is called directly by the `BaseNode` is not visible. This second callback is to inform the scheduler that the execution is finished for the current point in time. `callback_1` is added using the `BaseNode::addTimerCallback` function. This type of callback definition ensures that the scheduler is only notified once all callbacks added in this way have been completed. When adding callbacks directly as, e.g., via `rclcpp::create_timer(...)`, the order of execution is not guaranteed, the callback to notify the scheduler could be called before the callback that performs any actual tasks. Callbacks added via `BaseNode::addTimerCallback` are always executed in the order in which they were added via this function. The function has an optional argument, `BaseNode::addTimerCallback(callback, frquency_divisor = 1)`. If frequency_divisor is set, the corresponding callback is called with accordingly reduced frequency.
+Here, `ExampleNode` has one visible callback. A second callback which is called directly by the `BaseNode` is not visible. This second callback is to inform the scheduler that the execution is finished for the current point in time. `callback_1` is added using the `BaseNode::addTimerCallback` function. This type of callback definition ensures that the scheduler is only notified once all callbacks added in this way have been completed. When adding callbacks directly as, e.g., via `rclcpp::create_timer(...)`, the order of execution is not guaranteed, the callback to notify the scheduler could be called before the callback that performs any actual tasks. Callbacks added via `BaseNode::addTimerCallback` are always executed in the order in which they were added via this function. The function has an optional argument, `BaseNode::addTimerCallback(callback, frquency_divisor = 1)`. If frequency_divisor is set, the corresponding callback is called with accordingly reduced frequency. In order to use the scheduling functionality, the `use_scheduler` parameter bust be set to `True` on startup. 
 
 ## adore_scheduler
-
-to do
+The `adore_scheduler` is a ROS2 node that does the actual scheduling for all nodes that have registered. The scheduling can be paused/resumed by typing `'p'`, the simulation speed can be limited to ~1.0 by typing `'l'`. Typing `'i'` makes the scheduler writing an informational list of registered nodes to stdout. The list contains the upper bound in time for every registered node which might be especially helpful for debugging in certain circumstances.
