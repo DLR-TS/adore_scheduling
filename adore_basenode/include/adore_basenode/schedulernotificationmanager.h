@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <adore_ros2_msgs/msg/scheduler_notification.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <string>

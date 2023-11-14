@@ -30,7 +30,10 @@ include(requirements.cmake)
 
 
 
-add_library(adore_basenode src/basenode.cpp)
+add_library(adore_basenode
+              src/basenode.cpp
+              src/schedulernotification.cpp
+              src/schedulernotificationmanager.cpp)
 target_include_directories(adore_basenode
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"

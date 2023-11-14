@@ -13,6 +13,8 @@
  *   Thomas Lobig - initial API and implementation
  ********************************************************************************/
 
+#pragma once
+
 #include <rclcpp/rclcpp.hpp>
 #include <string>
 #include <vector>
