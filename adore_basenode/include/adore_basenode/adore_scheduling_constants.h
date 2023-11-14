@@ -17,14 +17,12 @@
 /**
  * this header provides constants used in the adore::scheduling project
  */
-namespace adore
-{
-    namespace scheduling
-    {
-        const char TOPIC_NAME_SIMULATION_TIME[] = "/SIM/utc";
-        const char TOPIC_NAME_CLOCK_TIME[] = "/clock";
-        const char TOPIC_NAME_CLIENT_NAME[] = "/SIM/scheduling_client_names";
-        const char TOPIC_NAME_SCHEDULER_NOTIFICATION[] = "/SIM/scheduling";
-        const char PARAM_NAME_USE_SCHEDULER[] = "use_scheduler";
-    }
-}
+namespace adore {
+namespace scheduling {
+const char TOPIC_NAME_SIMULATION_TIME[] = "/SIM/utc";
+const char TOPIC_NAME_CLOCK_TIME[] = "/clock";
+const char TOPIC_NAME_CLIENT_NAME[] = "/SIM/scheduling_client_names";
+const char TOPIC_NAME_SCHEDULER_NOTIFICATION[] = "/SIM/scheduling";
+const char PARAM_NAME_USE_SCHEDULER[] = "use_scheduler";
+}  // namespace scheduling
+}  // namespace adore
