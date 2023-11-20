@@ -2,6 +2,6 @@ make
 cmake
 gcc
 g++
-python3-catkin-tools
+#python3-catkin-tools
 bash
 libroscpp-dev
