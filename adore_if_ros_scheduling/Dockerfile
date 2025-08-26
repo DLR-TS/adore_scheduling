@@ -38,6 +38,17 @@ RUN apt-get update && \
     xargs apt-get install --no-install-recommends -y < ${REQUIREMENTS_FILE} && \
     rm -rf /var/lib/apt/lists/*
 
+
+#RUN apt-get update && apt-get install -y \
+#    lsb-release \
+#    wget
+#RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list' && \
+#    wget http://packages.ros.org/ros.key -O - | apt-key add - && \
+#    apt-get update && \
+#    apt-get install --no-install-recommends -y checkinstall && \
+#    xargs apt-get install --no-install-recommends -y < ${REQUIREMENTS_FILE} && \
+#    rm -rf /var/lib/apt/lists/*
+#
 COPY ${PROJECT} /tmp/${PROJECT}/${PROJECT}
 
 
